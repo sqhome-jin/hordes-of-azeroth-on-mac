@@ -4,5 +4,5 @@
 	branch = vanilla-bonk
 [submodule "client"]
 	path = client
-	url = https://github.com/jonhaldors/hordes-of-azeroth-client.git
+	url = https://github.com/sqhome-jin/hordes-of-azeroth-client-on-mac.git
 	branch = main
