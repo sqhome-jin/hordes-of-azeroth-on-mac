@@ -8,18 +8,23 @@ bash "$(dirname "$0")/layout-run.sh"
 
 EXTRACTORS="$RUN_DIR/Extractors"
 THREADS="${THREADS:-$(sysctl -n hw.ncpu)}"
-CLIENT_ROOT="$WOW_DATA"
+CLIENT_ROOT="$WOW_INSTALL"
 
 if [ ! -d "$CLIENT_ROOT/Data" ]; then
-    echo "Missing $CLIENT_ROOT/Data" >&2
+    echo "Missing $CLIENT_ROOT/Data (install root=$CLIENT_ROOT)" >&2
     exit 1
 fi
 
 mkdir -p "$DATA_DIR/vmaps" "$DATA_DIR/mmaps"
 cd "$DATA_DIR"
 
+# Several extractors print "Press enter to close..." and block if stdin is a TTY/pipe end.
+run_extractor() {
+    printf '\n' | "$@"
+}
+
 echo "=== Maps and DBC ==="
-"$EXTRACTORS/MapExtractor" -i "$CLIENT_ROOT" --silent
+run_extractor "$EXTRACTORS/MapExtractor" -i "$CLIENT_ROOT" --silent
 if [ -d "$DATA_DIR/dbc" ]; then
     rm -rf "$DATA_DIR/5875/dbc"
     mkdir -p "$DATA_DIR/5875"
@@ -27,9 +32,13 @@ if [ -d "$DATA_DIR/dbc" ]; then
 fi
 
 echo "=== VMap extract ==="
-"$EXTRACTORS/VMapExtractor" -d "$CLIENT_ROOT/Data" --silent
+# VMapExtractor refuses a non-empty Buildings dir ("polluted").
+rm -rf Buildings
+run_extractor "$EXTRACTORS/VMapExtractor" -d "$CLIENT_ROOT/Data" --silent
 echo "=== VMap assemble ==="
-"$EXTRACTORS/VMapAssembler" Buildings vmaps --silent
+rm -rf vmaps
+mkdir -p vmaps
+run_extractor "$EXTRACTORS/VMapAssembler" Buildings vmaps --silent
 
 echo "=== MMap generate (navtiles.json groups, $THREADS threads) ==="
 python3 - "$EXTRACTORS" "$DATA_DIR" "$CONFIG_DIR/navtiles.json" "$THREADS" <<'PY'

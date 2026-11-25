@@ -11,12 +11,13 @@ mkdir -p "$LOG_DIR"
 
 if ! port_open 3306; then
     echo 'Starting MariaDB...'
-    "$MARIA_DIR/bin/mariadbd" \
+    : >"$LOG_DIR/mariadb.log"
+    daemonize "$LOG_DIR/mariadbd.pid" \
+        "$MARIA_DIR/bin/mariadbd" \
         --defaults-file="$CONFIG_DIR/mariadb.ini" \
         --basedir="$MARIA_DIR" \
         --datadir="$MARIA_DATA" \
-        >"$LOG_DIR/mariadb.log" 2>&1 &
-    echo $! > "$LOG_DIR/mariadbd.pid"
+        >>"$LOG_DIR/mariadb.log" 2>&1
     wait_port 3306 60 MariaDB
 else
     echo 'MariaDB already running'
@@ -24,7 +25,11 @@ fi
 
 if ! port_open 3724; then
     echo 'Starting realmd...'
-    (cd "$RUN_DIR" && ./realmd -c realmd.conf >"$LOG_DIR/realmd.log" 2>&1 & echo $! > "$LOG_DIR/realmd.pid")
+    : >"$LOG_DIR/realmd.log"
+    (
+        cd "$RUN_DIR"
+        daemonize "$LOG_DIR/realmd.pid" ./realmd -c realmd.conf >>"$LOG_DIR/realmd.log" 2>&1
+    )
     wait_port 3724 30 realmd
 else
     echo 'realmd already running'
@@ -36,7 +41,11 @@ if ! port_open 8085; then
         exit 1
     fi
     echo 'Starting mangosd (world load takes a moment)...'
-    (cd "$RUN_DIR" && ./mangosd -c mangosd.conf >"$LOG_DIR/mangosd.log" 2>&1 & echo $! > "$LOG_DIR/mangosd.pid")
+    : >"$LOG_DIR/mangosd.log"
+    (
+        cd "$RUN_DIR"
+        daemonize "$LOG_DIR/mangosd.pid" ./mangosd -c mangosd.conf >>"$LOG_DIR/mangosd.log" 2>&1
+    )
     wait_port 8085 300 mangosd
 else
     echo 'mangosd already running'

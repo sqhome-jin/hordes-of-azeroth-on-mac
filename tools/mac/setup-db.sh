@@ -32,12 +32,13 @@ fi
 
 if ! port_open 3306; then
     echo 'Starting MariaDB...'
-    "$MARIA_DIR/bin/mariadbd" \
+    : >"$LOG_DIR/mariadb-bootstrap.log"
+    daemonize "$LOG_DIR/mariadbd.pid" \
+        "$MARIA_DIR/bin/mariadbd" \
         --defaults-file="$CONFIG_DIR/mariadb.ini" \
         --basedir="$MARIA_DIR" \
         --datadir="$MARIA_DATA" \
-        >"$LOG_DIR/mariadb-bootstrap.log" 2>&1 &
-    echo $! > "$LOG_DIR/mariadbd.pid"
+        >>"$LOG_DIR/mariadb-bootstrap.log" 2>&1
     wait_port 3306 60 MariaDB
 else
     echo 'MariaDB already running on 3306.'

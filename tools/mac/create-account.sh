@@ -7,6 +7,8 @@ set -euo pipefail
 NAME="${1:-player}"
 PASS="${2:-player}"
 GM="${3:-6}"
+# realmd stores usernames uppercase; gmlevel set must match.
+NAME_UPPER="$(printf '%s' "$NAME" | tr '[:lower:]' '[:upper:]')"
 
 bash "$(dirname "$0")/layout-run.sh"
 bash "$(dirname "$0")/apply-config.sh"
@@ -37,7 +39,7 @@ echo "Creating account $NAME (gm $GM)..."
         printf '\naccount create %s %s\n' "$NAME" "$PASS"
         if [ "$GM" -gt 0 ]; then
             sleep 2
-            printf 'account set gmlevel %s %s\n' "$NAME" "$GM"
+            printf 'account set gmlevel %s %s\n' "$NAME_UPPER" "$GM"
         fi
         sleep 3
         printf 'server exit\n'

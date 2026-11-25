@@ -12,11 +12,7 @@ fi
 mkdir -p "$RUN_DIR" "$LOG_DIR" "$DATA_DIR"
 ln -sfn "$BREW_MARIA" "$MARIA_DIR"
 
-# Prefer enUS game data for HoA.
-if [ -d "$WOW_DATA/Data.enUS" ]; then
-    ln -sfn Data.enUS "$WOW_DATA/Data"
-    echo "WOW Data -> Data.enUS"
-fi
+echo "WOW locale=$WOW_LOCALE install=$WOW_INSTALL client WOW_DATA=$WOW_DATA"
 
 # CMake install puts binaries under bin/ and conf under etc/.
 ln -sfn bin/mangosd "$RUN_DIR/mangosd"
