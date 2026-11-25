@@ -47,7 +47,7 @@ https://github.com/user-attachments/assets/3a82f020-7192-48dc-b6be-f6316bda0225
 
 - Your own copy of **World of Warcraft 1.12.1, build 5875, English (enUS)**. Hordes of Azeroth doesn't include the game.
 - A copy of that client used only for Hordes of Azeroth. The launcher adds its own files to the folder, so don't use your folder for other servers.
-- Windows 10 or 11 (64-bit), or Linux and Steam Deck (beta). About 3 GB of free space next to the game, and up-to-date graphics drivers.
+- Windows 10 or 11 (64-bit), Linux and Steam Deck (beta), or Apple Silicon Mac (arm64, in progress). About 3 GB of free space next to the game, and up-to-date graphics drivers.
 
 ### Install
 
@@ -185,7 +185,7 @@ Packs that come as <code>patch-?.MPQ</code> files go in the game's <code>Data</c
 <details>
 <summary><b>Does it run on Mac or Linux?</b></summary>
 <br>
-Linux and Steam Deck are supported in beta, see <a href="#install">Install</a>. Mac isn't supported.
+Linux and Steam Deck are supported in beta, see <a href="#install">Install</a>. Apple Silicon (arm64) Mac support is in progress in this fork: native launcher, client and server builds exist, but a portable MariaDB package and end-to-end Install/Play packaging are still being finished.
 </details>
 
 <br>

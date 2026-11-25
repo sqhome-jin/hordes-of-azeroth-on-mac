@@ -269,7 +269,7 @@ namespace HordesOfAzeroth.Launcher
                         $"\"--datadir={m_folder.MariaDbData}\"", "--password=root",
                         $"\"--config={Path.Combine(m_folder.Config, "mariadb.ini")}\"", "--verbose-bootstrap");
                 else
-                    await CreateLinuxDatabaseFilesAsync();
+                    await CreateUnixDatabaseFilesAsync();
             }
             catch (InvalidOperationException failure)
             {
@@ -288,7 +288,8 @@ namespace HordesOfAzeroth.Launcher
             }
         }
 
-        async Task CreateLinuxDatabaseFilesAsync()
+        // Linux and macOS MariaDB bintars both ship scripts/mariadb-install-db with the same flags.
+        async Task CreateUnixDatabaseFilesAsync()
         {
             string rootPassword = Path.Combine(m_folder.LauncherData, "root-password.sql");
             Directory.CreateDirectory(m_folder.LauncherData);

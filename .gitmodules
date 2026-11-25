@@ -1,6 +1,6 @@
 [submodule "server/core"]
 	path = server/core
-	url = https://github.com/jonhaldors/hordes-of-azeroth-server.git
+	url = git@github.com:sqhome-jin/hordes-of-azeroth-server-on-mac.git
 	branch = vanilla-bonk
 [submodule "client"]
 	path = client
