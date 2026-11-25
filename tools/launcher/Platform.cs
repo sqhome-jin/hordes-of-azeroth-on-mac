@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Formats.Tar;
+using System.Runtime.Versioning;
 
 namespace HordesOfAzeroth.Launcher
 {
@@ -14,10 +15,13 @@ namespace HordesOfAzeroth.Launcher
         // Mach-O: 32-bit LE, 64-bit LE, fat/universal (all as little-endian uint32 on disk for Apple Silicon).
         static readonly uint[] MachOMagics = { 0xFEEDFACE, 0xFEEDFACF, 0xCFFAEDFE, 0xCEFAEDFE, 0xBEBAFECA, 0xCAFEBABE };
 
+        [SupportedOSPlatformGuard("windows")]
         public static bool IsWindows => OperatingSystem.IsWindows();
 
+        [SupportedOSPlatformGuard("macos")]
         public static bool IsMacOS => OperatingSystem.IsMacOS();
 
+        [SupportedOSPlatformGuard("linux")]
         public static bool IsLinux => OperatingSystem.IsLinux();
 
         public static bool HasTray => IsWindows;
@@ -82,7 +86,9 @@ namespace HordesOfAzeroth.Launcher
         {
             if (IsWindows || !IsUnixProgram(file))
                 return;
-            File.SetUnixFileMode(file, Executable);
+            // Guard for CA1416: SetUnixFileMode is Unix-only; IsWindows alone is not enough for the analyzer.
+            if (IsLinux || IsMacOS)
+                File.SetUnixFileMode(file, Executable);
         }
 
         static bool IsUnixProgram(string file) => IsElf(file) || IsMachO(file);
